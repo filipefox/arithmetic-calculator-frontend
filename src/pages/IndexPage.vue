@@ -18,7 +18,13 @@
       :rows-per-page-options="[5,10]"
       @request="requestData"
       binary-state-sort
-    ></q-table>
+    >
+      <template v-slot:body-cell-actions="props">
+        <q-td :props="props">
+          <q-btn @click="deleteById(props.key)" icon="delete" dense flat round></q-btn>
+        </q-td>
+      </template>
+    </q-table>
   </q-page>
 </template>
 
@@ -40,6 +46,7 @@ const operationResult = ref(null)
 const getOperationResult = async () => {
   const response = await api.post('/v1/operations', operation.value)
   operationResult.value = response.data.result
+  await loadData()
 }
 
 const rows = ref([])
@@ -71,6 +78,11 @@ const columns = [
     name: 'dateTime',
     field: 'dateTime',
     sortable: true
+  },
+  {
+    label: 'Actions',
+    name: 'actions',
+    field: 'actions'
   }
 ]
 
@@ -95,6 +107,11 @@ const loadData = async () => {
   const response = await api.get(`/v1/records?page=${page}&rowsPerPage=${rowsPerPage}&sortBy=${sortBy}&descending=${descending ? 'DESC' : 'ASC'}`)
   rows.value = response.data.rows
   pagination.value.rowsNumber = response.data.rowsNumber
+}
+
+const deleteById = async (id) => {
+  await api.delete(`/v1/records/${id}`)
+  await loadData()
 }
 
 const requestData = ({ pagination: newPagination }) => {

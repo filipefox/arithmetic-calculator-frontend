@@ -1,10 +1,13 @@
 <template>
   <q-layout class="row items-center justify-evenly">
-    <q-form>
-      <q-input v-model="request.username" label="Username"></q-input>
-      <q-input v-model="request.password" label="Password"></q-input>
-      <q-btn @click="login" label="Login"></q-btn>
-    </q-form>
+    <div>
+      <p class="text-h5">Arithmetic Calculator</p>
+      <q-form class="column q-gutter-md">
+        <q-input label="Username" v-model="request.username" outlined></q-input>
+        <q-input label="Password" v-model="request.password" type="password" outlined></q-input>
+        <q-btn  label="Login" @click="login" color="primary"></q-btn>
+      </q-form>
+    </div>
   </q-layout>
 </template>
 
@@ -13,10 +16,15 @@ import { api } from 'boot/axios'
 import { ref } from 'vue'
 import { useAuthStore } from 'stores/auth-store'
 import { useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
 
-const request = ref({ username: undefined, password: undefined })
+const request = ref({
+  username: undefined,
+  password: undefined
+})
 const authStore = useAuthStore()
 const router = useRouter()
+const $q = useQuasar()
 
 async function login () {
   try {
@@ -24,7 +32,11 @@ async function login () {
     authStore.setToken(response.data.access_token)
     await router.push('/')
   } catch (e) {
-    console.log(e)
+    $q.notify({
+      message: 'Invalid credentials.',
+      position: 'center',
+      timeout: 1000
+    })
   }
 }
 </script>

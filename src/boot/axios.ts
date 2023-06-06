@@ -18,7 +18,7 @@ const api = axios.create({ baseURL: import.meta.env.VITE_API_BASE_URL })
 
 api.interceptors.request.use(function (config) {
   const authStore = useAuthStore()
-  config.headers.Authorization = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiZmlsaXBlZm94QGdtYWlsLmNvbSIsImlhdCI6MTY4NTcxNTcxNCwiZXhwIjoxNzE3MjczMzE0fQ.PAOyr94u1L1yYom8HSHU4JIX1xi8ipnK4KXy0VHQLEw'
+  config.headers.Authorization = `Bearer ${authStore.getToken()}`
   return config
 }, function (error) {
   return Promise.reject(error)
