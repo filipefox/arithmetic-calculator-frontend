@@ -31,6 +31,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { api } from 'boot/axios'
+import { useQuasar } from 'quasar'
 
 const operation = ref({ number1: 0, number2: 0, operationId: undefined })
 const operationOptions = [
@@ -42,11 +43,21 @@ const operationOptions = [
   { label: 'Random string', value: 5 }
 ]
 const operationResult = ref(null)
+const $q = useQuasar()
 
 const getOperationResult = async () => {
-  const response = await api.post('/v1/operations', operation.value)
-  operationResult.value = response.data.result
-  await loadData()
+  try {
+    const response = await api.post('/v1/operations', operation.value)
+    operationResult.value = response.data.result
+    await loadData()
+  } catch (e) {
+    console.log(e)
+    $q.notify({
+      message: e.response.data.message,
+      position: 'center',
+      timeout: 1000
+    })
+  }
 }
 
 const rows = ref([])
@@ -77,7 +88,8 @@ const columns = [
     label: 'Date',
     name: 'dateTime',
     field: 'dateTime',
-    sortable: true
+    sortable: true,
+    format: (val) => `${new Date(val).toLocaleString()}`
   },
   {
     label: 'Actions',
