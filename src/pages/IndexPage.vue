@@ -11,17 +11,16 @@
 
     <p class="text-h4">Records</p>
     <q-table
-      :rows="rows"
-      :columns="columns"
+      :rows="records"
+      :columns="recordColumns"
       row-key="id"
-      v-model:pagination="pagination"
+      v-model:pagination="recordsPagination"
       :rows-per-page-options="[5,10]"
-      @request="requestData"
-      binary-state-sort
-    >
+      @request="getRecordsPagination"
+      binary-state-sort>
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
-          <q-btn @click="deleteById(props.key)" icon="delete" dense flat round></q-btn>
+          <q-btn @click="deleteRecordById(props.key)" icon="delete" dense flat round></q-btn>
         </q-td>
       </template>
     </q-table>
@@ -30,9 +29,16 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
-import { api } from 'boot/axios'
 import { useQuasar } from 'quasar'
+import { api } from 'boot/axios'
 
+const $q = useQuasar()
+
+onMounted(() => {
+  getRecords()
+})
+
+/* OPERATIONS */
 const operation = ref({ number1: 0, number2: 0, operationId: undefined })
 const operationOptions = [
   { label: 'Addition', value: 0 },
@@ -43,15 +49,13 @@ const operationOptions = [
   { label: 'Random string', value: 5 }
 ]
 const operationResult = ref(null)
-const $q = useQuasar()
 
 const getOperationResult = async () => {
   try {
     const response = await api.post('/v1/operations', operation.value)
     operationResult.value = response.data.result
-    await loadData()
+    await getRecords()
   } catch (e) {
-    console.log(e)
     $q.notify({
       message: e.response.data.message,
       position: 'center',
@@ -60,8 +64,10 @@ const getOperationResult = async () => {
   }
 }
 
-const rows = ref([])
-const columns = [
+/* RECORDS */
+const records = ref([])
+const recordsPagination = ref({ page: 1, rowsPerPage: 5, sortBy: 'id', descending: false })
+const recordColumns = [
   {
     label: 'ID',
     name: 'id',
@@ -98,36 +104,20 @@ const columns = [
   }
 ]
 
-const pagination = ref({
-  page: 1,
-  rowsPerPage: 5,
-  sortBy: 'id',
-  descending: false
-})
-
-onMounted(() => {
-  loadData()
-})
-
-const loadData = async () => {
-  const {
-    page,
-    rowsPerPage,
-    sortBy,
-    descending
-  } = pagination.value
+const getRecords = async () => {
+  const { page, rowsPerPage, sortBy, descending } = recordsPagination.value
   const response = await api.get(`/v1/records?page=${page}&rowsPerPage=${rowsPerPage}&sortBy=${sortBy}&descending=${descending ? 'DESC' : 'ASC'}`)
-  rows.value = response.data.rows
-  pagination.value.rowsNumber = response.data.rowsNumber
+  records.value = response.data.rows
+  recordsPagination.value.rowsNumber = response.data.rowsNumber
 }
 
-const deleteById = async (id) => {
+const deleteRecordById = async (id) => {
   await api.delete(`/v1/records/${id}`)
-  await loadData()
+  await getRecords()
 }
 
-const requestData = ({ pagination: newPagination }) => {
-  pagination.value = newPagination
-  loadData()
+const getRecordsPagination = ({ pagination }) => {
+  recordsPagination.value = pagination
+  getRecords()
 }
 </script>

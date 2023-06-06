@@ -12,16 +12,13 @@
 </template>
 
 <script setup lang="ts">
-import { api } from 'boot/axios'
 import { ref } from 'vue'
 import { useAuthStore } from 'stores/auth-store'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
+import { api } from 'boot/axios'
 
-const request = ref({
-  username: undefined,
-  password: undefined
-})
+const request = ref({ username: undefined, password: undefined })
 const authStore = useAuthStore()
 const router = useRouter()
 const $q = useQuasar()
