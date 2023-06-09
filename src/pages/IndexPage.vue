@@ -16,7 +16,7 @@
       row-key="id"
       v-model:pagination="recordsPagination"
       :rows-per-page-options="[5,10]"
-      @request="getRecordsPagination"
+      @request="doRecordsPagination"
       binary-state-sort>
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
@@ -116,7 +116,7 @@ const deleteRecordById = async (id) => {
   await getRecords()
 }
 
-const getRecordsPagination = ({ pagination }) => {
+const doRecordsPagination = ({ pagination }) => {
   recordsPagination.value = pagination
   getRecords()
 }

@@ -14,20 +14,17 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useAuthStore } from 'stores/auth-store'
-import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { api } from 'boot/axios'
 
 const request = ref({ username: undefined, password: undefined })
 const authStore = useAuthStore()
-const router = useRouter()
 const $q = useQuasar()
 
 async function login () {
   try {
     const response = await api.post('/v1/auth/login', request.value)
     authStore.setToken(response.data.access_token)
-    await router.push('/')
   } catch (e) {
     $q.notify({
       message: 'Invalid credentials.',

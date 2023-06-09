@@ -16,7 +16,7 @@ declare module '@vue/runtime-core' {
 // for each client)
 const api = axios.create({ baseURL: import.meta.env.VITE_API_BASE_URL })
 
-api.interceptors.request.use(function (config) {
+api.interceptors.request.use(async function (config) {
   const authStore = useAuthStore()
   config.headers.Authorization = `Bearer ${authStore.getToken()}`
   return config
