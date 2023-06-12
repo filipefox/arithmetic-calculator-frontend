@@ -1,6 +1,4 @@
-# Arithmetic Calculator (arithmetic-calculator-frontend)
-
-A Quasar Project
+# Arithmetic Calculator - Frontend
 
 ## Install the dependencies
 ```bash
@@ -21,13 +19,3 @@ yarn lint
 # or
 npm run lint
 ```
-
-
-
-### Build the app for production
-```bash
-quasar build
-```
-
-### Customize the configuration
-See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-js).
