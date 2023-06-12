@@ -106,7 +106,7 @@ const recordColumns = [
 
 const getRecords = async () => {
   const { page, rowsPerPage, sortBy, descending } = recordsPagination.value
-  const response = await api.get(`/v1/records?page=${page}&rowsPerPage=${rowsPerPage}&sortBy=${sortBy}&descending=${descending ? 'DESC' : 'ASC'}`)
+  const response = await api.get(`/v1/records?page=${page}&rowsPerPage=${rowsPerPage}&sortBy=${sortBy}&order=${descending ? 'DESC' : 'ASC'}`)
   records.value = response.data.rows
   recordsPagination.value.rowsNumber = response.data.rowsNumber
 }
